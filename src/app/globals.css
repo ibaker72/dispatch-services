@@ -1,0 +1,135 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens — dependable, modern, driver-friendly.
+ * Dark navy + warm white + steel gray, with one accent ("highway amber").
+ * Contrast pairs are checked by `pnpm check:contrast` (WCAG AA):
+ *   navy-900 on paper, steel-600 on paper, paper on navy-900,
+ *   navy-900 on accent, accent on navy-900, accent-ink on paper.
+ * Amber is never used for text on light backgrounds; use accent-ink.
+ */
+@theme {
+  --color-navy-950: #09131f;
+  --color-navy-900: #0f1f33;
+  --color-navy-800: #17304d;
+  --color-navy-700: #214063;
+  --color-navy-600: #2e5580;
+  --color-navy-100: #e3e9f1;
+  --color-navy-50: #f1f4f8;
+
+  --color-paper: #faf8f5;
+  --color-paper-2: #f3efe8;
+  --color-paper-3: #e9e3d8;
+
+  --color-steel-900: #1b2733;
+  --color-steel-700: #33414f;
+  --color-steel-600: #4a5a6a;
+  --color-steel-500: #5f6f7f;
+  --color-steel-400: #8795a3;
+  --color-steel-300: #b3bdc7;
+  --color-steel-200: #d5dbe1;
+  --color-steel-100: #eceff2;
+
+  --color-accent: #f2a900;
+  --color-accent-strong: #d99700;
+  --color-accent-soft: #fdf1d3;
+  --color-accent-ink: #7a4f00;
+
+  --color-success: #1d6b3a;
+  --color-success-soft: #e3f3e8;
+  --color-warning: #8a4b00;
+  --color-warning-soft: #fdf0dc;
+  --color-danger: #b42318;
+  --color-danger-soft: #fdebea;
+  --color-info: #1f4f8a;
+  --color-info-soft: #e5eef9;
+
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  --radius-sm: 0.25rem;
+  --radius-md: 0.375rem;
+  --radius-lg: 0.5rem;
+  --radius-xl: 0.75rem;
+
+  --shadow-card: 0 1px 2px rgb(15 31 51 / 0.06), 0 1px 3px rgb(15 31 51 / 0.08);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    @apply bg-paper text-steel-900 antialiased;
+    font-feature-settings: "cv11", "ss01";
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply text-navy-900;
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  /* Visible focus for keyboard users everywhere. */
+  :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline: 3px solid var(--color-navy-600);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  .on-dark :where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+    outline-color: var(--color-accent);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6 lg:px-8;
+  }
+
+  .prose-legal {
+    @apply max-w-3xl text-[15px] leading-7 text-steel-700;
+  }
+  .prose-legal h2 {
+    @apply mt-10 mb-3 text-xl font-semibold;
+  }
+  .prose-legal h3 {
+    @apply mt-6 mb-2 text-base font-semibold;
+  }
+  .prose-legal p,
+  .prose-legal ul,
+  .prose-legal ol {
+    @apply mb-4;
+  }
+  .prose-legal ul {
+    @apply list-disc pl-6;
+  }
+  .prose-legal ol {
+    @apply list-decimal pl-6;
+  }
+  .prose-legal a {
+    @apply font-medium text-navy-700 underline underline-offset-2;
+  }
+  .prose-legal blockquote {
+    @apply mb-6 border-l-4 border-accent bg-accent-soft px-4 py-3 text-steel-900;
+  }
+}
