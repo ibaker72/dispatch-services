@@ -10,6 +10,7 @@ type Money = string;
 
 export interface TemplateData {
   application_received: { contactName: string; resumeUrl?: string };
+  application_resume_link: { contactName: string; resumeUrl: string; expiresOn: string };
   application_status_changed: { contactName: string; statusLabel: string; note?: string | null };
   information_requested: { contactName: string; request: string; resumeUrl: string };
   application_approved: { contactName: string; carrierName: string; nextSteps: string };
@@ -33,6 +34,7 @@ export type TemplateKey = keyof TemplateData;
 
 export const TEMPLATE_LABELS: Record<TemplateKey, string> = {
   application_received: "Application received",
+  application_resume_link: "Finish your application later",
   application_status_changed: "Application status changed",
   information_requested: "More information requested",
   application_approved: "Application approved",
@@ -63,6 +65,13 @@ export const TEMPLATES: { [K in TemplateKey]: Builder<K> } = {
       "Nothing is booked on your behalf until you have signed a dispatch agreement and approved a specific load.",
     ],
     cta: d.resumeUrl ? { label: "View your application", url: d.resumeUrl } : undefined,
+  }),
+  application_resume_link: (d) => ({
+    subject: "Your link to finish your dispatch application",
+    heading: "Pick up where you left off",
+    paragraphs: [`Hi ${d.contactName}, your application progress is saved. Use the link below to continue on any device.`],
+    cta: { label: "Continue your application", url: d.resumeUrl },
+    footnote: `This link is personal to your application and works until ${d.expiresOn}. Please do not forward it.`,
   }),
   application_status_changed: (d) => ({
     subject: `Your application status: ${d.statusLabel}`,

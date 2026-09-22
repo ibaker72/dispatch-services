@@ -136,7 +136,7 @@ export async function requireCarrierUser(opts: { owner?: boolean; nextPath?: str
   return ctx as CarrierContext;
 }
 
-export function homePathFor(ctx: Pick<AuthContext, "staffRoles" | "membership">): string {
+export function homePathFor(ctx: { staffRoles: readonly string[]; membership: object | null }): string {
   if (ctx.staffRoles.length) return "/dashboard";
   if (ctx.membership) return "/portal";
   return "/";

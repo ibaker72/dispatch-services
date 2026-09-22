@@ -9,6 +9,7 @@ const brand = { brandName: "Test Dispatch", legalEntity: "Test Dispatch LLC", ad
 
 const SAMPLE: { [K in TemplateKey]: Parameters<(typeof TEMPLATES)[K]>[0] } = {
   application_received: { contactName: "Pat" },
+  application_resume_link: { contactName: "Pat", resumeUrl: "https://x.example/apply/resume?token=t", expiresOn: "Oct 22, 2026" },
   application_status_changed: { contactName: "Pat", statusLabel: "Under review" },
   information_requested: { contactName: "Pat", request: "Upload a current COI", resumeUrl: "https://x.example/apply/resume?t=1" },
   application_approved: { contactName: "Pat", carrierName: "Pat Hauling", nextSteps: "Watch for the portal invitation." },

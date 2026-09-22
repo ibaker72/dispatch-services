@@ -102,7 +102,7 @@ export function verifyLocalToken(
   return constantTimeEqual(signLocalToken(secret, op, objectPath, expires, name), signature);
 }
 
-class LocalStorageDriver implements StorageDriver {
+export class LocalStorageDriver implements StorageDriver {
   constructor(
     private readonly root: string,
     private readonly secret: string,
