@@ -1,0 +1,87 @@
+{
+  "name": "dispatch-services",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Truck dispatch service website, carrier onboarding, carrier portal and internal dispatch operations platform.",
+  "packageManager": "pnpm@10.33.0",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint . --max-warnings=0",
+    "test": "vitest run --project unit",
+    "test:db": "vitest run --project db",
+    "test:integration": "vitest run --project integration",
+    "test:all": "vitest run",
+    "test:e2e": "playwright test",
+    "check:rls": "tsx scripts/check-rls.ts",
+    "check:contrast": "tsx scripts/check-contrast.ts",
+    "db:types": "tsx scripts/gen-db-types.ts",
+    "stack:start": "node scripts/local-stack/stack.mjs start",
+    "stack:stop": "node scripts/local-stack/stack.mjs stop",
+    "stack:reset": "node scripts/local-stack/stack.mjs reset",
+    "stack:status": "node scripts/local-stack/stack.mjs status",
+    "seed": "tsx scripts/seed.ts",
+    "audit:deps": "pnpm audit --audit-level high",
+    "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm check:rls && pnpm test:db && pnpm test:integration && pnpm build"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "5.9.1",
+    "@sentry/nextjs": "10.75.2",
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.117.0",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "geist": "1.7.2",
+    "inngest": "3.54.2",
+    "lucide-react": "1.47.0",
+    "next": "16.3.6",
+    "posthog-js": "1.434.9",
+    "posthog-node": "5.52.5",
+    "radix-ui": "1.6.7",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "react-hook-form": "7.88.0",
+    "resend": "6.28.1",
+    "server-only": "0.0.1",
+    "stripe": "22.6.2",
+    "tailwind-merge": "3.7.0",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@eslint/js": "9.39.5",
+    "@playwright/test": "1.56.1",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/node": "22.20.4",
+    "@types/pg": "8.23.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.3.6",
+    "jose": "6.2.12",
+    "pg": "8.23.0",
+    "postcss": "8.5.28",
+    "tailwindcss": "4.3.3",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vitest": "4.1.11"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@sentry/cli",
+      "esbuild",
+      "sharp",
+      "unrs-resolver"
+    ],
+    "ignoredBuiltDependencies": [
+      "core-js",
+      "protobufjs"
+    ]
+  }
+}
