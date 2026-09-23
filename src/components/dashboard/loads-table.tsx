@@ -28,7 +28,19 @@ export function laneOf(stops: LoadRow["load_stops"]): { lane: string; pickup: st
 }
 
 /** Load list shared by the dashboard and carrier portal (links go to `${basePath}/${id}`). */
-export function LoadsTable({ loads, basePath, showCarrier = true, showBroker = true }: { loads: LoadRow[]; basePath: string; showCarrier?: boolean; showBroker?: boolean }) {
+export function LoadsTable({
+  loads,
+  basePath,
+  showCarrier = true,
+  showBroker = true,
+  audience = "staff",
+}: {
+  loads: LoadRow[];
+  basePath: string;
+  showCarrier?: boolean;
+  showBroker?: boolean;
+  audience?: "staff" | "carrier";
+}) {
   return (
     <Table caption="Loads">
       <THead>
@@ -65,7 +77,7 @@ export function LoadsTable({ loads, basePath, showCarrier = true, showBroker = t
                 {l.deadhead_miles ? <div className="text-xs text-steel-600">+{formatMiles(l.deadhead_miles)} DH</div> : null}
               </TD>
               <TD>
-                <LoadStatusBadge status={l.status} />
+                <LoadStatusBadge status={l.status} audience={audience} />
               </TD>
             </TR>
           );

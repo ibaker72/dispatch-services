@@ -6,6 +6,7 @@ import { Alert } from "@/components/ui/alert";
 import { Button, type ButtonProps } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { Field } from "@/components/ui/field";
+import { Checkbox } from "@/components/ui/input";
 import type { ActionResult } from "@/lib/actions";
 import { cn } from "@/lib/utils";
 
@@ -103,6 +104,25 @@ export function FormField(props: Omit<React.ComponentProps<typeof Field>, "error
   const errors = React.useContext(FieldErrorsContext);
   const { name, ...rest } = props;
   return <Field {...rest} error={errors[name ?? props.id]} />;
+}
+
+/** Checkbox with its label and any server-side error for `name`. */
+export function FormCheckbox({ id, name, defaultChecked, children }: { id: string; name: string; defaultChecked?: boolean; children: React.ReactNode }) {
+  const errors = React.useContext(FieldErrorsContext);
+  const message = errors[name]?.[0];
+  return (
+    <div>
+      <label htmlFor={id} className="flex items-start gap-2 text-sm">
+        <Checkbox id={id} name={name} defaultChecked={defaultChecked} aria-invalid={message ? true : undefined} aria-describedby={message ? `${id}-error` : undefined} />
+        <span>{children}</span>
+      </label>
+      {message ? (
+        <p id={`${id}-error`} className="mt-1 text-sm font-medium text-danger">
+          {message}
+        </p>
+      ) : null}
+    </div>
+  );
 }
 
 /** A button that asks for confirmation (and optionally a reason) before running an action. */

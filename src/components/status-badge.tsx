@@ -17,8 +17,12 @@ const LOAD_TONES: Record<LoadStatus, BadgeTone> = {
   cancelled: "danger",
 };
 
-export function LoadStatusBadge({ status }: { status: LoadStatus }) {
-  return <Badge tone={LOAD_TONES[status]}>{LOAD_STATUS_LABELS[status]}</Badge>;
+/** Carrier-facing wording for statuses that read differently from the carrier's side. */
+const CARRIER_LABELS: Partial<Record<LoadStatus, string>> = { proposed: "Needs your decision", approved: "You approved" };
+
+export function LoadStatusBadge({ status, audience = "staff" }: { status: LoadStatus; audience?: "staff" | "carrier" }) {
+  const label = (audience === "carrier" ? CARRIER_LABELS[status] : undefined) ?? LOAD_STATUS_LABELS[status];
+  return <Badge tone={LOAD_TONES[status]}>{label}</Badge>;
 }
 
 const GENERIC_TONES: Record<string, BadgeTone> = {

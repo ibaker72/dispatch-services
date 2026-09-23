@@ -48,7 +48,7 @@ export default async function AssignmentsPage() {
           Invite dispatchers from Settings → Staff users.
         </Alert>
       ) : null}
-      <div className="grid gap-6 lg:grid-cols-2">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
         {dispatchers.map((d) => {
           const mine = rows.filter((a) => a.dispatcher_id === d.user_id);
           return (

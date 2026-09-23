@@ -56,7 +56,7 @@ export default async function StatementPage({ params }: { params: Promise<{ id: 
           {s.void_reason}
         </Alert>
       ) : null}
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_20rem]">
         <StatementView
           statement={s}
           lines={lines ?? []}

@@ -22,7 +22,7 @@ export async function ActivityTab({ ctx, carrier }: CarrierTabProps) {
   ]);
 
   return (
-    <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
       <Card>
         <CardHeader>
           <CardTitle>Communication history</CardTitle>

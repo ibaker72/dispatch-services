@@ -160,7 +160,7 @@ export default async function LoadDetailPage({ params }: { params: Promise<{ id:
 
       {load.status_note ? <p className="mb-4 text-sm text-steel-700">Latest update: {load.status_note}</p> : null}
 
-      <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="grid grid-cols-1 gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="space-y-6">
           {!closed ? (
             <Card>
