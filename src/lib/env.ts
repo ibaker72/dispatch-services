@@ -48,8 +48,6 @@ const schema = z.object({
   NEXT_PUBLIC_SENTRY_DSN: optional,
 
   CRON_SECRET: optional,
-  INNGEST_EVENT_KEY: optional,
-  INNGEST_SIGNING_KEY: optional,
 
   RATE_LIMIT_SALT: optional,
   TURNSTILE_SECRET_KEY: optional,

@@ -69,8 +69,12 @@ export async function createUser(
   const id = randomUUID();
   await tx.query(
     SYSTEM,
-    `insert into auth.users (instance_id, id, aud, role, email, email_confirmed_at, raw_user_meta_data, raw_app_meta_data, created_at, updated_at)
-     values ('00000000-0000-0000-0000-000000000000', $1, 'authenticated', 'authenticated', $2, $3, $4::jsonb, '{}'::jsonb, now(), now())`,
+    // Token columns must be '' (not NULL) or GoTrue's admin user listing fails on these rows.
+    `insert into auth.users (instance_id, id, aud, role, email, email_confirmed_at, raw_user_meta_data, raw_app_meta_data, created_at, updated_at,
+                             confirmation_token, recovery_token, email_change, email_change_token_new, email_change_token_current,
+                             phone_change, phone_change_token, reauthentication_token)
+     values ('00000000-0000-0000-0000-000000000000', $1, 'authenticated', 'authenticated', $2, $3, $4::jsonb, '{}'::jsonb, now(), now(),
+             '', '', '', '', '', '', '', '')`,
     [id, `${label}-${suffix}@test.example`, opts.confirmed === false ? null : new Date(), JSON.stringify({ full_name: label })],
   );
   return id;

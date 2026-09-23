@@ -52,6 +52,9 @@ function must<T>(res: { data: T; error: { message: string } | null }, what: stri
 }
 
 async function ensureUser(u: { email: string; password: string; name: string }): Promise<string> {
+  // profiles mirrors auth.users (trigger), so this lookup does not depend on paging the admin API.
+  const { data: profile } = await db.from("profiles").select("id").eq("email", u.email).maybeSingle();
+  if (profile) return profile.id;
   for (let page = 1; page < 20; page++) {
     const { data } = await db.auth.admin.listUsers({ page, perPage: 200 });
     const found = data.users.find((x) => x.email === u.email);

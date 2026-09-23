@@ -53,7 +53,7 @@ export function AppShell({
             <form action={signOut}>
               <button type="submit" className="inline-flex h-9 items-center gap-1.5 rounded-md px-2.5 text-sm font-medium text-steel-700 hover:bg-paper-2">
                 <LogOut className="size-4" aria-hidden="true" />
-                <span className="hidden sm:inline">Sign out</span>
+                <span className="sr-only sm:not-sr-only">Sign out</span>
               </button>
             </form>
           </div>

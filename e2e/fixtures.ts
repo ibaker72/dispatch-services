@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import { test as base, expect, type Page } from "@playwright/test";
+import { type Browser, test as base, expect, type Page } from "@playwright/test";
 
 /**
  * Shared fixtures. Every test fails if the browser logs a console error or an
@@ -67,6 +67,36 @@ export function linkFrom(text: string, contains: string): string {
   const link = text.match(/https?:\/\/\S+/g)?.find((l) => l.includes(contains));
   if (!link) throw new Error(`no link containing ${contains}`);
   return link;
+}
+
+/** Opens a separate signed-in browser context (so tests can act as several users). */
+export async function signedInPage(browser: Browser, who: { email: string; password: string }, next?: string): Promise<Page> {
+  const context = await browser.newContext();
+  const page = await context.newPage();
+  const errors: string[] = [];
+  page.on("pageerror", (err) => errors.push(err.message));
+  page.on("console", (msg) => {
+    if (msg.type() === "error") errors.push(msg.text());
+  });
+  (page as Page & { consoleErrors?: string[] }).consoleErrors = errors;
+  await login(page, who, next);
+  return page;
+}
+
+/** Asserts a secondary page (from signedInPage) logged no console errors. */
+export function expectNoConsoleErrors(page: Page) {
+  expect((page as Page & { consoleErrors?: string[] }).consoleErrors ?? [], `console errors on ${page.url()}`).toEqual([]);
+}
+
+/**
+ * Asserts the user gets the not-found page. Pages stream behind loading
+ * skeletons, so a denied record renders the not-found UI (noindex) rather
+ * than guaranteeing a 404 status line.
+ */
+export async function expectNotFound(page: Page, path: string, mustNotContain?: string) {
+  await page.goto(path);
+  await expect(page.getByRole("heading", { name: "We could not find that page" })).toBeVisible();
+  if (mustNotContain) await expect(page.getByText(mustNotContain)).toHaveCount(0);
 }
 
 export function uniqueEmail(prefix: string) {

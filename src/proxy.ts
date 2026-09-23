@@ -30,7 +30,7 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     {
-      source: "/((?!_next/static|_next/image|monitoring|favicon.ico|icon|apple-icon|robots.txt|sitemap.xml|api/stripe|api/payments|api/cron|api/inngest).*)",
+      source: "/((?!_next/static|_next/image|monitoring|favicon.ico|icon|apple-icon|robots.txt|sitemap.xml|api/stripe|api/payments|api/cron).*)",
       missing: [
         { type: "header", key: "next-router-prefetch" },
         { type: "header", key: "purpose", value: "prefetch" },
