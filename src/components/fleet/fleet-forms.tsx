@@ -1,6 +1,5 @@
 import { addAvailability, addLanePreference, saveDriver, saveTrailer, saveTruck } from "@/app/actions/fleet";
 import { ActionForm, FormField } from "@/components/action-form";
-import { TimezoneOffsetInput } from "@/components/timezone-offset-input";
 import { Checkbox, Input, Select, Textarea } from "@/components/ui/input";
 import { EQUIPMENT_KEYS, EQUIPMENT_LABELS } from "@/config/business";
 import type { Tables } from "@/lib/db/database.types";
@@ -189,7 +188,9 @@ export function AvailabilityForm({
   drivers,
   trucks,
   idPrefix = "availability",
+  zoneLabel,
 }: {
+  zoneLabel: string;
   carrierId: string;
   drivers: Array<Pick<Tables<"drivers">, "id" | "full_name">>;
   trucks: Array<Pick<Tables<"trucks">, "id" | "unit_number">>;
@@ -199,7 +200,6 @@ export function AvailabilityForm({
   return (
     <ActionForm action={addAvailability} submitLabel="Post availability" resetOnSuccess>
       <input type="hidden" name="carrier_id" value={carrierId} />
-      <TimezoneOffsetInput />
       <div className={grid}>
         <FormField id={p("driver")} name="driver_id" label="Driver" required>
           <Select name="driver_id" defaultValue="">
@@ -231,10 +231,10 @@ export function AvailabilityForm({
           </Select>
         </FormField>
         <div />
-        <FormField id={p("from")} name="available_from" label="From" required>
+        <FormField id={p("from")} name="available_from" label={`From (${zoneLabel})`} required>
           <Input name="available_from" type="datetime-local" />
         </FormField>
-        <FormField id={p("until")} name="available_until" label="Until">
+        <FormField id={p("until")} name="available_until" label={`Until (${zoneLabel})`}>
           <Input name="available_until" type="datetime-local" />
         </FormField>
         <FormField id={p("city")} name="location_city" label="Location city">

@@ -3901,6 +3901,7 @@ export type Database = {
       accept_organization_invitation: { Args: { p_token: string }; Returns: string };
       approve_application: { Args: { p_application_id: string; p_fee_plan_key?: string; p_dispatcher_id?: string; p_note?: string }; Returns: string };
       assign_dispatcher: { Args: { p_carrier_id: string; p_dispatcher_id: string; p_primary: boolean; p_note?: string }; Returns: string };
+      create_load: { Args: { p_load: Json; p_stops: Json; p_vehicles?: Json }; Returns: string };
       generate_weekly_statement: { Args: { p_carrier_id: string; p_period_start: string }; Returns: string };
       get_carrier_onboarding: { Args: { p_carrier_id: string }; Returns: Json };
       get_dashboard_metrics: { Args: { p_week_start?: string }; Returns: Json };

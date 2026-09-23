@@ -28,7 +28,8 @@
     "stack:status": "node scripts/local-stack/stack.mjs status",
     "seed": "tsx scripts/seed.ts",
     "audit:deps": "pnpm audit --audit-level high",
-    "verify": "pnpm typecheck && pnpm lint && pnpm test && pnpm check:rls && pnpm test:db && pnpm test:integration && pnpm build"
+    "verify": "pnpm typecheck && pnpm lint && pnpm check:hints && pnpm test && pnpm check:rls && pnpm test:db && pnpm test:integration && pnpm build",
+    "check:hints": "tsx scripts/check-query-hints.ts"
   },
   "dependencies": {
     "@hookform/resolvers": "5.9.1",

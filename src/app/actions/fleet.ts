@@ -4,7 +4,9 @@ import { z } from "zod";
 import { type ActionResult, DbError, runFormAction } from "@/lib/actions";
 import { getAuthContext } from "@/lib/auth/session";
 import { EQUIPMENT_KEYS } from "@/config/business";
+import { zonedLocalToIso } from "@/lib/domain/dates";
 import { AppError } from "@/lib/errors";
+import { getOperationsSettings } from "@/lib/settings";
 import { formBool, formOptionalDate, formOptionalNumber, formOptionalText, formOptionalUuid, requiredText, stateSchema } from "@/lib/validation/common";
 import { TRAILER_TYPES } from "@/lib/validation/application";
 
@@ -147,29 +149,25 @@ const availabilitySchema = z
     status: z.enum(["available", "unavailable", "home_time"]),
     available_from: z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/, "Enter a start date and time"),
     available_until: z.preprocess((v) => (v === "" ? undefined : v), z.string().regex(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/).optional()),
-    timezone_offset: z.coerce.number().int().min(-900).max(900).default(0),
     location_city: formOptionalText(100),
     location_state: optionalState,
     notes: formOptionalText(1000),
   })
   .refine((v) => !v.available_until || v.available_until > v.available_from, { path: ["available_until"], message: "End must be after the start" });
 
-/** datetime-local values carry no zone; the browser sends its UTC offset (minutes, as from getTimezoneOffset). */
-function toIso(local: string, offsetMinutes: number) {
-  const utc = Date.parse(`${local.slice(0, 16)}:00Z`) + offsetMinutes * 60_000;
-  return new Date(utc).toISOString();
-}
 
 export async function addAvailability(fd: FormData): Promise<ActionResult<null>> {
   return runFormAction(availabilitySchema, fd, async (v) => {
     const ctx = await signedIn();
+    // Wall-clock times are entered in the business timezone (shown next to the inputs).
+    const { timezone } = await getOperationsSettings();
     const { error } = await ctx.supabase.from("driver_availability").insert({
       carrier_id: v.carrier_id,
       driver_id: v.driver_id,
       truck_id: v.truck_id ?? null,
       status: v.status,
-      available_from: toIso(v.available_from, v.timezone_offset),
-      available_until: v.available_until ? toIso(v.available_until, v.timezone_offset) : null,
+      available_from: zonedLocalToIso(v.available_from, timezone),
+      available_until: v.available_until ? zonedLocalToIso(v.available_until, timezone) : null,
       location_city: v.location_city ?? null,
       location_state: v.location_state ?? null,
       notes: v.notes ?? null,

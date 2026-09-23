@@ -14,6 +14,7 @@ export interface DocumentRow {
   expires_on: string | null;
   uploaded_at: string;
   review_note?: string | null;
+  loads?: { reference: string } | null;
 }
 
 /** Documents with RLS-checked download links (/api/documents/:id/download). */
@@ -39,6 +40,7 @@ export function DocumentTable({ documents, actions, caption = "Documents" }: { d
               <div className="max-w-[16rem] truncate text-xs text-steel-600" title={d.original_filename}>
                 {d.original_filename} · {formatBytes(d.size_bytes)}
               </div>
+              {d.loads ? <div className="text-xs text-steel-600">Load {d.loads.reference}</div> : null}
               {d.review_note ? <div className="mt-1 text-xs text-steel-700">Note: {d.review_note}</div> : null}
             </TD>
             <TD>

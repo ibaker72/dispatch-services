@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addDays, daysUntil, localDate, weekStart } from "@/lib/domain/dates";
+import { addDays, daysUntil, isoToZonedLocal, localDate, weekStart, zonedLocalToIso } from "@/lib/domain/dates";
 import { evaluateLeaseOn, LEASE_ON_REQUIREMENTS } from "@/lib/domain/lease-on";
 import {
   LOAD_STATUSES,
@@ -147,5 +147,16 @@ describe("business-timezone dates", () => {
     expect(addDays("2026-12-30", 3)).toBe("2027-01-02");
     expect(daysUntil("2026-10-01", "2026-09-22")).toBe(9);
     expect(daysUntil("2026-09-20", "2026-09-22")).toBe(-2);
+  });
+
+  it("converts datetime-local wall clock values in the business timezone", () => {
+    expect(zonedLocalToIso("2026-09-22T08:00", "America/Chicago")).toBe("2026-09-22T13:00:00.000Z");
+    expect(zonedLocalToIso("2026-01-15T08:00", "America/Chicago")).toBe("2026-01-15T14:00:00.000Z");
+    // Day after the spring-forward transition and the fall-back day itself.
+    expect(zonedLocalToIso("2026-03-09T00:30", "America/Chicago")).toBe("2026-03-09T05:30:00.000Z");
+    expect(zonedLocalToIso("2026-11-01T12:00", "America/Chicago")).toBe("2026-11-01T18:00:00.000Z");
+    expect(isoToZonedLocal("2026-09-22T13:00:00.000Z", "America/Chicago")).toBe("2026-09-22T08:00");
+    expect(isoToZonedLocal(zonedLocalToIso("2026-07-04T23:45", "America/New_York"), "America/New_York")).toBe("2026-07-04T23:45");
+    expect(isoToZonedLocal(null, "America/Chicago")).toBe("");
   });
 });
