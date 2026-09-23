@@ -30,7 +30,7 @@ export function FilterTabs({
 }) {
   const current = params[name];
   return (
-    <nav aria-label={label} className="-mx-1 mb-4 flex gap-1 overflow-x-auto px-1 pb-1">
+    <nav aria-label={label} className="relative -mx-1 mb-4 flex gap-1 overflow-x-auto px-1 pb-1">
       {options.map((o) => {
         const active = (o.value ?? undefined) === (current ?? undefined);
         return (

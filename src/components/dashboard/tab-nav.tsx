@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 /** Server-rendered tab navigation (each tab is a URL, so it works without JavaScript). */
 export function TabNav({ tabs, current, label }: { tabs: Array<{ key: string; label: string; href: string; count?: number | null }>; current: string; label: string }) {
   return (
-    <nav aria-label={label} className="mb-6 -mx-4 overflow-x-auto border-b border-steel-200 px-4 sm:mx-0 sm:px-0">
+    <nav aria-label={label} className="relative mb-6 -mx-4 overflow-x-auto border-b border-steel-200 px-4 sm:mx-0 sm:px-0">
       <ul className="flex min-w-max gap-1">
         {tabs.map((t) => {
           const active = t.key === current;

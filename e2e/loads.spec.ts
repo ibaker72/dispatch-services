@@ -10,6 +10,8 @@ test("a proposed load is approved by the carrier and booked by the dispatcher", 
   await login(page, DEMO.dispatcher);
 
   await page.goto("/dashboard/loads/new");
+  // Interact only after hydration; React Hook Form applies default values on mount.
+  await page.waitForLoadState("networkidle");
   await page.locator("#carrier_id").selectOption({ label: "Northstar Auto Transport LLC (Demo)" });
   await page.locator("#broker_name").fill(broker);
   await page.locator("#gross_rate").fill("2450.00");

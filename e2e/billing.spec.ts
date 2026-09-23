@@ -6,6 +6,7 @@ test("a carrier pays a dispatch service invoice online", async ({ page, browser 
   const amount = `${40 + Math.floor(Math.random() * 50)}.${String(Math.floor(Math.random() * 90) + 10)}`;
   await login(page, DEMO.admin, "/dashboard/billing?tab=invoices");
   await page.goto("/dashboard/billing?tab=invoices");
+  await page.waitForLoadState("networkidle");
   await page.getByRole("button", { name: "Manual invoice" }).click();
   const dialog = page.getByRole("dialog");
   await dialog.getByLabel("Carrier").selectOption({ label: "Northstar Auto Transport LLC (Demo)" });

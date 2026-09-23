@@ -1,10 +1,14 @@
 import type * as React from "react";
 import { cn } from "@/lib/utils";
 
-/** Responsive table: scrolls horizontally inside its card on small screens. */
+/**
+ * Responsive table: scrolls horizontally inside its card on small screens.
+ * The scroll container is a focusable, labelled region so keyboard users can
+ * scroll it even when the table has no interactive cells.
+ */
 export function Table({ className, caption, ...props }: React.ComponentProps<"table"> & { caption?: string }) {
   return (
-    <div className="w-full overflow-x-auto">
+    <div className="relative w-full overflow-x-auto" tabIndex={0} role="region" aria-label={caption ?? "Table"}>
       <table className={cn("w-full min-w-[640px] border-collapse text-left text-sm", className)} {...props}>
         {caption ? <caption className="sr-only">{caption}</caption> : null}
         {props.children}

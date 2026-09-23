@@ -8,7 +8,8 @@ import { DEMO, expect, login, test } from "./fixtures";
  */
 async function audit(page: Page, path: string) {
   await page.goto(path);
-  await page.waitForLoadState("networkidle");
+  // Prefer a quiet network, but do not fail the audit on a slow background request.
+  await page.waitForLoadState("networkidle", { timeout: 10_000 }).catch(() => undefined);
   const results = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa"]).exclude("nextjs-portal").analyze();
   const blocking = results.violations.filter((v) => v.impact === "serious" || v.impact === "critical");
   expect(
@@ -29,15 +30,28 @@ test.describe("accessibility @mobile", () => {
   }
 
   test("carrier portal pages", async ({ page }) => {
+    test.setTimeout(240_000);
     await login(page, DEMO.ownerA);
-    for (const path of ["/portal", "/portal/loads", "/portal/billing", "/portal/documents", "/portal/onboarding", "/portal/account"]) {
+    for (const path of ["/portal", "/portal/loads", "/portal/billing", "/portal/documents", "/portal/onboarding", "/portal/team", "/portal/fleet", "/portal/account"]) {
       await audit(page, path);
     }
   });
 
   test("dispatch dashboard pages", async ({ page }) => {
+    test.setTimeout(240_000);
     await login(page, DEMO.admin);
-    for (const path of ["/dashboard", "/dashboard/applications?view=active", "/dashboard/carriers", "/dashboard/loads", "/dashboard/loads/new", "/dashboard/billing", "/dashboard/settings"]) {
+    for (const path of [
+      "/dashboard",
+      "/dashboard/applications?view=active",
+      "/dashboard/carriers",
+      "/dashboard/loads",
+      "/dashboard/loads/new",
+      "/dashboard/documents?view=all",
+      "/dashboard/billing",
+      "/dashboard/tasks?view=all",
+      "/dashboard/settings",
+      "/dashboard/settings?tab=security",
+    ]) {
       await audit(page, path);
     }
   });
