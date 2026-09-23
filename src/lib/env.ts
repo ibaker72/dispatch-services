@@ -79,6 +79,7 @@ export function resolveEnv(source: Record<string, string | undefined>): ServerEn
     if (parsed.STORAGE_DRIVER === "local") problems.push("STORAGE_DRIVER=local is for development only");
     if (paymentsDriver === "mock") problems.push("PAYMENTS_DRIVER=mock is for development only");
     if (emailDriver === "outbox") problems.push("EMAIL_DRIVER=outbox is for development only");
+    if (emailDriver === "console") problems.push("EMAIL_DRIVER=console is for development only; set RESEND_API_KEY");
     if (emailDriver === "resend" && !parsed.RESEND_API_KEY) problems.push("RESEND_API_KEY is required for EMAIL_DRIVER=resend");
     if (paymentsDriver === "stripe" && (!parsed.STRIPE_SECRET_KEY || !parsed.STRIPE_WEBHOOK_SECRET)) {
       problems.push("STRIPE_SECRET_KEY and STRIPE_WEBHOOK_SECRET are required for Stripe payments");

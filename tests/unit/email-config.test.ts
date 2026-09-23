@@ -124,6 +124,7 @@ describe("environment validation", () => {
     expect(() => resolveEnv({ APP_ENV: "production", STORAGE_DRIVER: "local" })).toThrow(/STORAGE_DRIVER=local/);
     expect(() => resolveEnv({ APP_ENV: "production", PAYMENTS_DRIVER: "mock", CRON_SECRET: "x", RATE_LIMIT_SALT: "y" })).toThrow(/mock/);
     expect(() => resolveEnv({ APP_ENV: "production", EMAIL_DRIVER: "outbox", CRON_SECRET: "x", RATE_LIMIT_SALT: "y" })).toThrow(/outbox/);
+    expect(() => resolveEnv({ APP_ENV: "production", CRON_SECRET: "x", RATE_LIMIT_SALT: "y" })).toThrow(/EMAIL_DRIVER=console/);
     expect(() => resolveEnv({ APP_ENV: "production", RESEND_API_KEY: "re_x", RATE_LIMIT_SALT: "y" })).toThrow(/CRON_SECRET/);
     expect(() =>
       resolveEnv({ APP_ENV: "production", RESEND_API_KEY: "re_x", STRIPE_SECRET_KEY: "sk_test_x", CRON_SECRET: "x", RATE_LIMIT_SALT: "y" }),
