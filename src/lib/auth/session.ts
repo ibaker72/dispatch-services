@@ -125,6 +125,15 @@ export async function requireStaff(opts: StaffOptions = {}): Promise<AuthContext
   return ctx;
 }
 
+/**
+ * Security-sensitive settings (feature flags marked sensitive, MFA policy,
+ * attorney approval, company authority, admin role grants) need a super
+ * admin who completed two-step verification in the current session.
+ */
+export function isElevated(ctx: Pick<AuthContext, "staffRoles" | "aal">): boolean {
+  return ctx.staffRoles.includes("super_admin") && ctx.aal === "aal2";
+}
+
 export interface CarrierContext extends AuthContext {
   membership: CarrierMembership & { carrierId: string };
 }

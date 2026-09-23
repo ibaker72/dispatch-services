@@ -170,3 +170,42 @@ export async function sendEmailSafely<K extends TemplateKey>(opts: SendEmailOpti
     console.error("[email] unexpected failure", error instanceof Error ? error.message : error);
   }
 }
+
+/**
+ * Re-attempts a failed outbound email from its stored rendering. Used by the
+ * retry job and the dashboard "Retry" button; gives up after MAX_EMAIL_ATTEMPTS.
+ */
+export async function retryCommunication(id: string): Promise<"sent" | "failed" | "skipped"> {
+  const admin = createSupabaseAdminClient();
+  const { data: row } = await admin
+    .from("communications")
+    .select("id, status, channel, direction, to_address, subject, body_html, body_text, attempts")
+    .eq("id", id)
+    .maybeSingle();
+  if (!row || row.channel !== "email" || row.direction !== "outbound" || row.status !== "failed" || !row.to_address) return "skipped";
+  if (row.attempts >= MAX_EMAIL_ATTEMPTS) {
+    await admin.from("communications").update({ status: "skipped", next_attempt_at: null }).eq("id", id);
+    return "skipped";
+  }
+  const attempts = row.attempts + 1;
+  try {
+    const result = await deliver({ to: row.to_address, subject: row.subject ?? "", html: row.body_html ?? "", text: row.body_text ?? "" });
+    await admin
+      .from("communications")
+      .update({ status: "sent", provider: result.provider, provider_message_id: result.messageId, attempts, sent_at: new Date().toISOString(), error: null, next_attempt_at: null })
+      .eq("id", id);
+    return "sent";
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error);
+    await admin
+      .from("communications")
+      .update({
+        status: attempts >= MAX_EMAIL_ATTEMPTS ? "skipped" : "failed",
+        attempts,
+        error: message.slice(0, 1000),
+        next_attempt_at: attempts >= MAX_EMAIL_ATTEMPTS ? null : new Date(Date.now() + nextAttemptDelayMinutes(attempts) * 60_000).toISOString(),
+      })
+      .eq("id", id);
+    return "failed";
+  }
+}

@@ -24,6 +24,7 @@ const SAMPLE: { [K in TemplateKey]: Parameters<(typeof TEMPLATES)[K]>[0] } = {
   invoice_due: { carrierName: "Pat Hauling", invoiceNumber: "INV-1", amountDue: "$308.00", dueDate: "Sep 29, 2026", overdue: false, invoiceUrl: "https://x.example/i" },
   payment_received: { carrierName: "Pat Hauling", invoiceNumber: "INV-1", amount: "$308.00", method: "ACH", receivedOn: "Sep 25, 2026", invoiceUrl: "https://x.example/i" },
   support_request_confirmation: { name: "Pat", subject: "Question", reference: "SR-1", portalUrl: "https://x.example/p" },
+  support_request_update: { name: "Pat", subject: "Detention question", statusLabel: "Resolved", message: "We added the detention to your load.", portalUrl: "https://x.example/portal/support" },
   admin_new_application: { legalName: "Pat Hauling", equipment: "Car hauler", truckCount: "2", reviewUrl: "https://x.example/a" },
   admin_support_request: { carrierName: "Pat Hauling", category: "billing", subject: "Question", reviewUrl: "https://x.example/a" },
   daily_operations_summary: { date: "Sep 22, 2026", lines: [["Loads booked", "3"]], dashboardUrl: "https://x.example/d" },

@@ -58,7 +58,7 @@ export function LoadsTable({ loads, basePath, showCarrier = true, showBroker = t
               <TD>{pickup ? formatDate(pickup) : "—"}</TD>
               <TD className="text-right tabular-nums">
                 {l.gross_rate !== null ? formatMoney(l.gross_rate) : "—"}
-                {l.loaded_rate_per_mile !== null ? <div className="text-xs text-steel-600">{formatRate(l.loaded_rate_per_mile)}/mi</div> : null}
+                {l.loaded_rate_per_mile !== null ? <div className="text-xs text-steel-600">{formatRate(l.loaded_rate_per_mile)}</div> : null}
               </TD>
               <TD className="text-right tabular-nums">
                 {l.loaded_miles !== null ? formatMiles(l.loaded_miles) : "—"}

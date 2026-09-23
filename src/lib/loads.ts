@@ -60,7 +60,7 @@ export async function notifyLoadProposed(loadId: string): Promise<void> {
         lane: load.lane,
         pickupWindow,
         grossRate: formatMoney(load.gross_rate),
-        ratePerMile: load.loaded_rate_per_mile ? `${formatRate(load.loaded_rate_per_mile)} per loaded mile` : "—",
+        ratePerMile: load.loaded_rate_per_mile ? `${formatRate(load.loaded_rate_per_mile)} loaded` : "—",
         reviewUrl: absoluteUrl(`/portal/loads/${load.id}`),
       },
       carrierId: load.carrier_id,

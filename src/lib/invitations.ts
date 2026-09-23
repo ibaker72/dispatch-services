@@ -15,7 +15,7 @@ export const INVITATION_TTL_DAYS = 7;
  * created unconfirmed); existing accounts get a magic link. The link goes
  * through /auth/confirm, so it works in any browser.
  */
-export async function createAuthLink(email: string, nextPath: string): Promise<string> {
+export async function createAuthLink(email: string, nextPath: string): Promise<{ url: string; userId: string | null }> {
   const admin = createSupabaseAdminClient();
   const redirectTo = `${siteUrl()}${nextPath}`;
   let type: "invite" | "magiclink" = "invite";
@@ -30,7 +30,7 @@ export async function createAuthLink(email: string, nextPath: string): Promise<s
     throw new AppError("We could not create a sign-in link for that email address.");
   }
   const params = new URLSearchParams({ token_hash: hashed, type, next: nextPath });
-  return `${siteUrl()}/auth/confirm?${params.toString()}`;
+  return { url: `${siteUrl()}/auth/confirm?${params.toString()}`, userId: result.data?.user?.id ?? null };
 }
 
 /**
@@ -69,7 +69,7 @@ export async function createOrganizationInvitation(
   if (error || !data) {
     throw new AppError(error?.code === "42501" ? "You do not have permission to invite users to this carrier." : "We could not create the invitation.");
   }
-  const acceptUrl = await createAuthLink(opts.email, `/invite/accept?token=${encodeURIComponent(token)}`);
+  const { url: acceptUrl } = await createAuthLink(opts.email, `/invite/accept?token=${encodeURIComponent(token)}`);
   return { invitationId: data.id, acceptUrl };
 }
 

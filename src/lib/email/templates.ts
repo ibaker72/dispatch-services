@@ -25,6 +25,7 @@ export interface TemplateData {
   invoice_due: { carrierName: string; invoiceNumber: string; amountDue: Money; dueDate: string; overdue: boolean; invoiceUrl: string };
   payment_received: { carrierName: string; invoiceNumber: string; amount: Money; method: string; receivedOn: string; invoiceUrl: string };
   support_request_confirmation: { name: string; subject: string; reference: string; portalUrl: string };
+  support_request_update: { name: string; subject: string; statusLabel: string; message: string; portalUrl: string };
   admin_new_application: { legalName: string; equipment: string; truckCount: string; reviewUrl: string };
   admin_support_request: { carrierName: string; category: string; subject: string; reviewUrl: string };
   daily_operations_summary: { date: string; lines: Array<[string, string]>; dashboardUrl: string };
@@ -50,6 +51,7 @@ export const TEMPLATE_LABELS: Record<TemplateKey, string> = {
   invoice_due: "Invoice due",
   payment_received: "Payment received",
   support_request_confirmation: "Support request confirmation",
+  support_request_update: "Support request update",
   admin_new_application: "Admin: new application",
   admin_support_request: "Admin: new support request",
   daily_operations_summary: "Admin: daily operations summary",
@@ -202,6 +204,12 @@ export const TEMPLATES: { [K in TemplateKey]: Builder<K> } = {
     paragraphs: [`Hi ${d.name}, we received your request "${d.subject}" and will follow up soon.`],
     details: [["Reference", d.reference]],
     cta: { label: "View in portal", url: d.portalUrl },
+  }),
+  support_request_update: (d) => ({
+    subject: `Update on your request: ${d.subject}`,
+    heading: "Your support request was updated",
+    paragraphs: [`Hi ${d.name}, there is an update on "${d.subject}". Status: ${d.statusLabel}.`, d.message],
+    cta: { label: "View in the portal", url: d.portalUrl },
   }),
   admin_new_application: (d) => ({
     subject: `New carrier application: ${d.legalName}`,

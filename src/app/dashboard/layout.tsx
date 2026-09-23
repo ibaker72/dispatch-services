@@ -9,6 +9,14 @@ import { getBusinessProfile } from "@/lib/settings";
 export const metadata = { robots: { index: false, follow: false } };
 
 const ROLE_LABELS = { super_admin: "Super admin", admin: "Admin", dispatcher: "Dispatcher" } as const;
+const PLACEHOLDER_LABELS: Record<string, string> = {
+  brandName: "business name",
+  legalEntity: "legal entity",
+  email: "email",
+  phone: "phone",
+  address: "address",
+  websiteUrl: "website domain",
+};
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const ctx = await requireStaff();
@@ -47,7 +55,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <>
       {placeholders.length ? (
         <div role="note" className="border-b border-warning/30 bg-warning-soft px-4 py-2 text-sm text-warning sm:px-6">
-          Business details still contain placeholders ({placeholders.join(", ")}).{" "}
+          Business details still contain placeholders ({placeholders.map((p) => PLACEHOLDER_LABELS[p] ?? p).join(", ")}).{" "}
           <Link href="/dashboard/settings" className="font-semibold underline">
             Update settings
           </Link>

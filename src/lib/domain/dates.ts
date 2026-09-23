@@ -104,3 +104,11 @@ export function isoToZonedLocal(iso: string | null | undefined, timeZone: string
 export function zoneAbbreviation(timeZone: string, at = new Date()): string {
   return new Intl.DateTimeFormat("en-US", { timeZone, timeZoneName: "short" }).formatToParts(at).find((p) => p.type === "timeZoneName")?.value ?? timeZone;
 }
+
+/** Parses a ?week= value into the Monday of that week (falls back to `fallback`). */
+export function parseWeek(value: string | null | undefined, fallback: string): string {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(value)) return fallback;
+  const d = new Date(`${value}T12:00:00Z`);
+  if (Number.isNaN(d.getTime())) return fallback;
+  return addDays(value, -((d.getUTCDay() + 6) % 7));
+}

@@ -1,3 +1,5 @@
+"use client";
+
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
@@ -8,7 +10,30 @@ interface FieldProps {
   error?: string | string[];
   required?: boolean;
   className?: string;
-  children: React.ReactElement<{ id?: string; "aria-describedby"?: string; "aria-invalid"?: boolean; required?: boolean }>;
+  children: React.ReactNode;
+}
+
+export interface FieldControlProps {
+  id: string;
+  "aria-describedby"?: string;
+  "aria-invalid"?: boolean;
+  required?: boolean;
+}
+
+/**
+ * Accessibility wiring for the control inside a <Field>. Controls from
+ * ui/input read it from context (works even when the control is streamed from a
+ * Server Component); any other single element child is cloned instead.
+ */
+export const FieldControlContext = React.createContext<FieldControlProps | null>(null);
+
+/** Marks components that read FieldControlContext themselves. */
+export const FIELD_CONTROL = Symbol.for("dispatch.field-control");
+
+function isFieldControl(node: React.ReactNode): boolean {
+  if (!React.isValidElement(node)) return false;
+  const type = node.type as { [FIELD_CONTROL]?: boolean } | string;
+  return typeof type !== "string" && Boolean(type?.[FIELD_CONTROL]);
 }
 
 /**
@@ -20,6 +45,9 @@ export function Field({ id, label, hint, error, required, className, children }:
   const hintId = hint ? `${id}-hint` : undefined;
   const errorId = message ? `${id}-error` : undefined;
   const describedBy = [hintId, errorId].filter(Boolean).join(" ") || undefined;
+  const control: FieldControlProps = { id, "aria-describedby": describedBy, "aria-invalid": message ? true : undefined, required: required || undefined };
+  const content =
+    React.isValidElement<Partial<FieldControlProps>>(children) && !isFieldControl(children) ? React.cloneElement(children, control) : children;
   return (
     <div className={cn("space-y-1.5", className)}>
       <label htmlFor={id} className="block text-sm font-semibold text-navy-900">
@@ -35,12 +63,7 @@ export function Field({ id, label, hint, error, required, className, children }:
           {hint}
         </p>
       ) : null}
-      {React.cloneElement(children, {
-        id,
-        "aria-describedby": describedBy,
-        "aria-invalid": message ? true : undefined,
-        required: required || undefined,
-      })}
+      <FieldControlContext.Provider value={control}>{content}</FieldControlContext.Provider>
       {message ? (
         <p id={errorId} className="text-sm font-medium text-danger">
           {message}

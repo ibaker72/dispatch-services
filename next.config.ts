@@ -10,6 +10,9 @@ const extraActionOrigins = (process.env.SERVER_ACTION_ALLOWED_ORIGINS ?? "")
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   poweredByHeader: false,
+  // Dev-server logging of Server Function arguments would print passwords,
+  // tokens and personal data to the terminal.
+  logging: { serverFunctions: false },
   experimental: {
     serverActions: {
       // Uploads go directly to storage through signed URLs, so actions stay small.

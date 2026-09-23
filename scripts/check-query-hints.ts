@@ -21,6 +21,7 @@ const problems: string[] = [];
 for (const file of files("src")) {
   const text = readFileSync(file, "utf8");
   for (const m of text.matchAll(/[a-z_]+!([a-z0-9_]+)\(/g)) {
+    if (m[1] === "inner" || m[1] === "left") continue; // join modifiers, not constraint names
     if (!known.has(m[1]!)) problems.push(`${file}: unknown foreign key hint "${m[1]}"`);
   }
 }

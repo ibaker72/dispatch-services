@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { addDays, daysUntil, isoToZonedLocal, localDate, weekStart, zonedLocalToIso } from "@/lib/domain/dates";
+import { addDays, daysUntil, isoToZonedLocal, localDate, parseWeek, weekStart, zonedLocalToIso } from "@/lib/domain/dates";
 import { evaluateLeaseOn, LEASE_ON_REQUIREMENTS } from "@/lib/domain/lease-on";
 import {
   LOAD_STATUSES,
@@ -158,5 +158,13 @@ describe("business-timezone dates", () => {
     expect(isoToZonedLocal("2026-09-22T13:00:00.000Z", "America/Chicago")).toBe("2026-09-22T08:00");
     expect(isoToZonedLocal(zonedLocalToIso("2026-07-04T23:45", "America/New_York"), "America/New_York")).toBe("2026-07-04T23:45");
     expect(isoToZonedLocal(null, "America/Chicago")).toBe("");
+  });
+
+  it("normalizes week parameters to Monday", () => {
+    expect(parseWeek("2026-09-24", "2026-01-05")).toBe("2026-09-21");
+    expect(parseWeek("2026-09-21", "2026-01-05")).toBe("2026-09-21");
+    expect(parseWeek("2026-09-27", "2026-01-05")).toBe("2026-09-21");
+    expect(parseWeek("not-a-date", "2026-01-05")).toBe("2026-01-05");
+    expect(parseWeek(undefined, "2026-01-05")).toBe("2026-01-05");
   });
 });
