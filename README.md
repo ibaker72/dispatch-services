@@ -64,9 +64,26 @@ Demo accounts (fictional, local only): `admin@demo.example` / `DemoAdmin!2026`,
 | `pnpm check:hints` | Validates PostgREST embed constraint names |
 | `pnpm check:contrast` | WCAG AA contrast of the design tokens |
 | `pnpm audit:deps` | Fails on high/critical dependency advisories |
-| `pnpm verify` | All of the above except E2E |
+| `pnpm verify` | Typecheck, lint, hints, unit, RLS, DB and integration tests, then build (E2E, contrast and audit run separately) |
 | `pnpm db:types` | Regenerate `src/lib/db/database.types.ts` |
 | `pnpm seed` | Idempotent demo data (refuses production) |
+
+## Known limitations
+
+- Business details, agreement templates and legal pages are placeholders or
+  drafts until you fill them in and an attorney approves them.
+- Stripe, Resend, PostHog, Sentry and Turnstile run on development fallbacks
+  locally (mock checkout, file outbox, no-op analytics). Test each live
+  integration in a staging environment before launch.
+- Operating authority, insurance and safety checks are manual: staff check
+  FMCSA systems and record the result. There is no automated FMCSA lookup.
+- Uploads are checked for type, size and file signature, but not scanned for
+  malware.
+- Loads are entered by dispatchers; there is no load-board or broker API
+  integration.
+- One business timezone drives statement weeks and date entry.
+- There is no CI workflow in the repository yet; run `pnpm verify` and
+  `pnpm test:e2e` before deploying.
 
 ## Documentation
 

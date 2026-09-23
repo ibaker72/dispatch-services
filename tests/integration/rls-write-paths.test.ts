@@ -3,6 +3,7 @@
  * the written row back, so these tests exercise the exact write paths the UI
  * uses (not just raw SQL) for carrier owners, members and dispatchers.
  */
+import { randomBytes } from "node:crypto";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { clientAs } from "./support/clients";
 import { closePool } from "../db/support/harness";
@@ -38,7 +39,7 @@ describe("carrier owner writes", () => {
     const owner = clientAs(w.A.ownerId);
     const invite = await owner
       .from("organization_invitations")
-      .insert({ organization_id: w.A.orgId, email: `helper-${w.suffix}@test.example`, role: "carrier_member", token_hash: "b".repeat(64), invited_by: w.A.ownerId, expires_at: new Date(Date.now() + 86_400_000).toISOString() })
+      .insert({ organization_id: w.A.orgId, email: `helper-${w.suffix}@test.example`, role: "carrier_member", token_hash: randomBytes(32).toString("hex"), invited_by: w.A.ownerId, expires_at: new Date(Date.now() + 86_400_000).toISOString() })
       .select("id")
       .single();
     expect(invite.error).toBeNull();
@@ -46,7 +47,7 @@ describe("carrier owner writes", () => {
     expect(revoke.data).toHaveLength(1);
     const ownerInvite = await owner
       .from("organization_invitations")
-      .insert({ organization_id: w.A.orgId, email: `boss-${w.suffix}@test.example`, role: "carrier_owner", token_hash: "c".repeat(64), invited_by: w.A.ownerId, expires_at: new Date(Date.now() + 86_400_000).toISOString() })
+      .insert({ organization_id: w.A.orgId, email: `boss-${w.suffix}@test.example`, role: "carrier_owner", token_hash: randomBytes(32).toString("hex"), invited_by: w.A.ownerId, expires_at: new Date(Date.now() + 86_400_000).toISOString() })
       .select("id");
     expect(ownerInvite.error).not.toBeNull();
   });
