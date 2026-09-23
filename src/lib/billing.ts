@@ -30,6 +30,7 @@ export async function notifyStatementIssued(statementId: string): Promise<void> 
     await sendEmailSafely({
       to,
       template: "weekly_statement_ready",
+      preferenceCategory: "billing",
       data: {
         carrierName,
         periodLabel: `${formatDate(s.period_start, { month: "short", day: "numeric" })} – ${formatDate(s.period_end)}`,
@@ -55,6 +56,7 @@ export async function notifyInvoiceDue(invoiceId: string, opts: { overdue: boole
     await sendEmailSafely({
       to,
       template: "invoice_due",
+      preferenceCategory: "billing",
       data: {
         carrierName,
         invoiceNumber: inv.invoice_number,
@@ -81,6 +83,7 @@ export async function notifyPaymentReceived(paymentId: string): Promise<void> {
     await sendEmailSafely({
       to,
       template: "payment_received",
+      preferenceCategory: "billing",
       data: {
         carrierName,
         invoiceNumber: p.invoices?.invoice_number ?? "",

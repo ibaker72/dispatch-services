@@ -1,0 +1,12 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    { "path": "/api/cron/daily-operations-summary", "schedule": "0 11 * * *" },
+    { "path": "/api/cron/weekly-statements", "schedule": "0 12 * * 1" },
+    { "path": "/api/cron/document-expiration-reminders", "schedule": "0 13 * * *" },
+    { "path": "/api/cron/invoice-reminders", "schedule": "0 14 * * *" },
+    { "path": "/api/cron/onboarding-reminders", "schedule": "30 14 * * *" },
+    { "path": "/api/cron/stale-application-follow-up", "schedule": "0 15 * * *" },
+    { "path": "/api/cron/retry-failed-notifications", "schedule": "0 * * * *" }
+  ]
+}

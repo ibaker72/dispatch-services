@@ -5,6 +5,7 @@ import { type ActionResult, DbError, runFormAction } from "@/lib/actions";
 import { requireStaff } from "@/lib/auth/session";
 
 import { AppError } from "@/lib/errors";
+import { trackServer } from "@/lib/analytics/server";
 import { sendCarrierInvitation } from "@/lib/invitations";
 import {
   emailSchema,
@@ -26,6 +27,7 @@ export async function setCarrierStatus(fd: FormData): Promise<ActionResult<null>
     const ctx = await requireStaff({ admin: true });
     const { error } = await ctx.supabase.from("carriers").update({ status }).eq("id", carrier_id);
     if (error) throw new DbError(error);
+    if (status === "active") await trackServer("carrier_onboarding_completed", carrier_id, {});
     return null;
   });
 }

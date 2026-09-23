@@ -384,3 +384,19 @@ export async function revokeStaffRole(fd: FormData): Promise<ActionResult<null>>
     return null;
   });
 }
+
+// ---- Scheduled jobs ------------------------------------------------------------
+export async function runJobNow(fd: FormData): Promise<ActionResult<null>> {
+  const { JOBS } = await import("@/lib/jobs/registry");
+  const { runJob } = await import("@/lib/jobs/runner");
+  return runFormAction(z.object({ job: z.string().max(80) }), fd, async ({ job }) => {
+    await admin();
+    const def = JOBS[job];
+    if (!def) throw new AppError("Unknown job.", "not_found");
+    const now = new Date();
+    // Handlers are idempotent (dedupe keys), so a manual run gets its own run key.
+    const outcome = await runJob(job, `${await def.runKey(now)}:manual:${now.getTime()}`, "manual", () => def.handler(now));
+    if (outcome.status === "failed") throw new AppError(`The job failed: ${outcome.error ?? "see the audit log"}`);
+    return null;
+  });
+}

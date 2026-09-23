@@ -29,6 +29,8 @@ export interface SendEmailOptions<K extends TemplateKey> {
   dedupeKey?: string;
   visibility?: "internal" | "carrier";
   replyTo?: string;
+  /** Optional notification category; recipients who opted out of it are skipped. */
+  preferenceCategory?: "load_updates" | "documents" | "billing" | "application_updates" | "operations_summary";
 }
 
 export interface Delivery {
@@ -97,7 +99,17 @@ export async function deliver(message: Delivery): Promise<DeliveryResult> {
   }
 }
 
-export async function sendEmail<K extends TemplateKey>(opts: SendEmailOptions<K>): Promise<{ status: "sent" | "failed" | "duplicate"; id?: string }> {
+/** True when the recipient (if they have an account) turned this category off. */
+async function optedOut(email: string, category: NonNullable<SendEmailOptions<TemplateKey>["preferenceCategory"]>): Promise<boolean> {
+  const admin = createSupabaseAdminClient();
+  const { data: profile } = await admin.from("profiles").select("id").eq("email", email).maybeSingle();
+  if (!profile) return false;
+  const { data: pref } = await admin.from("notification_preferences").select("email_enabled").eq("user_id", profile.id).eq("category", category).maybeSingle();
+  return pref?.email_enabled === false;
+}
+
+export async function sendEmail<K extends TemplateKey>(opts: SendEmailOptions<K>): Promise<{ status: "sent" | "failed" | "duplicate" | "skipped"; id?: string }> {
+  if (opts.preferenceCategory && (await optedOut(opts.to, opts.preferenceCategory))) return { status: "skipped" };
   const overrides = await getEmailTemplateOverrides();
   const content = buildTemplate(opts.template, opts.data, overrides[opts.template]);
   const rendered = renderEmail(content, await brand());

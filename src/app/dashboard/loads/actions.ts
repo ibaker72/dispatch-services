@@ -7,6 +7,7 @@ import { Constants } from "@/lib/db/database.types";
 import { zonedLocalToIso } from "@/lib/domain/dates";
 import { LOAD_STATUSES } from "@/lib/domain/load-workflow";
 import { AppError } from "@/lib/errors";
+import { trackServer } from "@/lib/analytics/server";
 import { notifyLoadProposed, notifyLoadStatus } from "@/lib/loads";
 import { formBool, formOptionalText, formOptionalUuid, requiredText } from "@/lib/validation/common";
 import { getOperationsSettings } from "@/lib/settings";
@@ -160,6 +161,7 @@ export async function recordCarrierDecision(fd: FormData): Promise<ActionResult<
       p_approver_user_id: approver_user_id,
     });
     if (error) throw new DbError(error);
+    await trackServer(decision === "approved" ? "load_approved" : "load_rejected", ctx.userId, { via: `staff_${method}` });
     return null;
   });
 }

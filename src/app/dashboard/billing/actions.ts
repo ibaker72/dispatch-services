@@ -3,6 +3,7 @@
 import { z } from "zod";
 import { type ActionResult, DbError, runFormAction } from "@/lib/actions";
 import { requireStaff } from "@/lib/auth/session";
+import { trackServer } from "@/lib/analytics/server";
 import { notifyInvoiceDue, notifyPaymentReceived, notifyStatementIssued } from "@/lib/billing";
 import { localDate, parseWeek } from "@/lib/domain/dates";
 import { AppError } from "@/lib/errors";
@@ -84,8 +85,9 @@ export async function issueStatement(fd: FormData): Promise<ActionResult<null>> 
   const schema = z.object({ statement_id: z.uuid(), due_days: z.coerce.number().int().min(0).max(60), notify: z.preprocess((v) => v === "on", z.boolean()) });
   return runFormAction(schema, fd, async ({ statement_id, due_days, notify }) => {
     const ctx = await requireStaff({ admin: true });
-    const { error } = await ctx.supabase.rpc("issue_weekly_statement", { p_statement_id: statement_id, p_due_days: due_days });
+    const { data: invoiceId, error } = await ctx.supabase.rpc("issue_weekly_statement", { p_statement_id: statement_id, p_due_days: due_days });
     if (error) throw new DbError(error);
+    if (invoiceId) await trackServer("invoice_created", ctx.userId, { source: "statement" });
     if (notify) await notifyStatementIssued(statement_id);
     return null;
   });
@@ -117,6 +119,7 @@ export async function createManualInvoice(fd: FormData): Promise<ActionResult<nu
     if (lineError) throw new DbError(lineError);
     const { error: openError } = await ctx.supabase.from("invoices").update({ status: "open", due_date: due_date ?? null }).eq("id", inv.id);
     if (openError) throw new DbError(openError);
+    await trackServer("invoice_created", ctx.userId, { source: "manual" });
     return null;
   });
 }
@@ -150,6 +153,7 @@ export async function recordManualPayment(fd: FormData): Promise<ActionResult<nu
       .select("id")
       .single();
     if (error || !payment) throw new DbError(error ?? { message: "insert failed" });
+    await trackServer("invoice_paid", ctx.userId, { method: v.method });
     await notifyPaymentReceived(payment.id);
     return null;
   });

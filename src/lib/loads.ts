@@ -54,6 +54,7 @@ export async function notifyLoadProposed(loadId: string): Promise<void> {
     await sendEmailSafely({
       to,
       template: "proposed_load_review",
+      preferenceCategory: "load_updates",
       data: {
         carrierName,
         reference: load.reference,
@@ -82,6 +83,7 @@ export async function notifyLoadStatus(loadId: string, status: LoadStatus, note?
     await sendEmailSafely({
       to,
       template: "load_status_update",
+      preferenceCategory: "load_updates",
       data: { carrierName, reference: load.reference, lane: load.lane, statusLabel: LOAD_STATUS_LABELS[status], note, loadUrl: absoluteUrl(`/portal/loads/${load.id}`) },
       carrierId: load.carrier_id,
       loadId: load.id,
