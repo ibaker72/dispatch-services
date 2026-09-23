@@ -371,6 +371,8 @@ function envFileContents() {
     `LOCAL_STACK_MAIL_DIR=${DIRS.mail}`,
     `LOCAL_STORAGE_DIR=${DIRS.storage}`,
     `EMAIL_DEV_OUTBOX_DIR=${DIRS.outbox}`,
+    // Lets integration tests mint short-lived user tokens for the local stack only.
+    `LOCAL_STACK_JWT_SECRET=${JWT_SECRET}`,
     "",
   ].join("\n");
 }

@@ -6,6 +6,7 @@ import { type AllowedMimeType, validateUploadMetadata, verifyStoredFile } from "
 import { enforceRateLimit } from "@/lib/security/rate-limit";
 import { sha256Hex } from "@/lib/security/tokens";
 import { type SignedUpload, storage } from "@/lib/storage";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import type { UserSupabaseClient } from "@/lib/supabase/server";
 
 /**
@@ -73,7 +74,9 @@ export async function finalizeDocumentUpload(supabase: UserSupabaseClient, userI
   const verdict = bytes ? verifyStoredFile(bytes, doc.mime_type as AllowedMimeType) : { ok: false as const, error: "The upload did not complete." };
   if (!verdict.ok || !bytes) {
     await storage().remove(doc.storage_path).catch(() => undefined);
-    await supabase.from("documents").update({ deleted_at: new Date().toISOString() }).eq("id", doc.id);
+    // Ownership was checked above with the caller's RLS-scoped read. The withdrawal itself uses the
+    // service role: carriers cannot read deleted rows, which PostgREST's RETURNING would require.
+    await createSupabaseAdminClient().from("documents").update({ deleted_at: new Date().toISOString(), deleted_by: userId }).eq("id", doc.id).eq("status", "uploading");
     throw new AppError(verdict.ok ? "The upload did not complete." : verdict.error);
   }
   const { error } = await supabase
