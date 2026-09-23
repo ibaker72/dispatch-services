@@ -3900,14 +3900,17 @@ export type Database = {
     Functions: {
       accept_organization_invitation: { Args: { p_token: string }; Returns: string };
       approve_application: { Args: { p_application_id: string; p_fee_plan_key?: string; p_dispatcher_id?: string; p_note?: string }; Returns: string };
+      assign_dispatcher: { Args: { p_carrier_id: string; p_dispatcher_id: string; p_primary: boolean; p_note?: string }; Returns: string };
       generate_weekly_statement: { Args: { p_carrier_id: string; p_period_start: string }; Returns: string };
       get_carrier_onboarding: { Args: { p_carrier_id: string }; Returns: Json };
       get_dashboard_metrics: { Args: { p_week_start?: string }; Returns: Json };
       get_lease_on_readiness: { Args: {  }; Returns: Json };
       issue_weekly_statement: { Args: { p_statement_id: string; p_due_days?: number }; Returns: string };
+      list_staff_members: { Args: {  }; Returns: { user_id: string; full_name: string; email: string; roles: Database["public"]["Enums"]["app_role"][]; grants_all_carriers: boolean }[] };
       log_security_event: { Args: { p_action: string; p_metadata?: Json }; Returns: undefined };
       rate_limit_hit: { Args: { p_key: string; p_limit: number; p_window_seconds: number }; Returns: { allowed: boolean; remaining: number; reset_at: string }[] };
       record_carrier_load_decision: { Args: { p_load_id: string; p_decision: string; p_method: string; p_approver_name: string; p_note: string; p_approver_user_id?: string }; Returns: Database["public"]["Enums"]["load_status"] };
+      replace_fee_contract: { Args: { p_carrier_id: string; p_fee_plan_id: string; p_effective_from: string; p_notes: string; p_model?: Database["public"]["Enums"]["fee_model"]; p_percentage?: number; p_flat_weekly_amount?: number; p_include_detention?: boolean; p_include_layover?: boolean; p_include_tonu?: boolean; p_include_other?: boolean }; Returns: string };
       request_carrier_cancellation: { Args: { p_carrier_id: string; p_reason: string }; Returns: string };
       respond_to_proposed_load: { Args: { p_load_id: string; p_decision: string; p_note?: string }; Returns: Database["public"]["Enums"]["load_status"] };
     };

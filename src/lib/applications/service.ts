@@ -304,3 +304,18 @@ export async function submit(
   if (error || !data) throw new AppError("We could not submit your application. Please try again.");
   return data;
 }
+
+/**
+ * Issues a fresh resume token (used when staff request more information).
+ * Rotating invalidates any earlier link, so only the newest email works.
+ */
+export async function rotateResumeToken(admin: AdminSupabaseClient, applicationId: string): Promise<{ token: string; expiresAt: string }> {
+  const token = randomToken();
+  const expiresAt = new Date(Date.now() + DRAFT_TTL_DAYS * 86_400_000).toISOString();
+  const { error } = await admin
+    .from("carrier_applications")
+    .update({ resume_token_hash: sha256Hex(token), resume_token_expires_at: expiresAt })
+    .eq("id", applicationId);
+  if (error) throw new AppError("We could not create a new application link.");
+  return { token, expiresAt };
+}

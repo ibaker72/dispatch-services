@@ -16,7 +16,7 @@ import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { emailSchema } from "@/lib/validation/common";
 
-export const PASSWORD_MIN_LENGTH = 12;
+const PASSWORD_MIN_LENGTH = 12;
 
 const passwordSchema = z
   .string()

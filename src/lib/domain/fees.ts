@@ -128,3 +128,24 @@ export function describeFeeTerms(terms: Pick<FeeTerms, "model" | "percentage" | 
   }
   return `${formatCents(toCents(terms.flatWeeklyAmount))} per active truck per week`;
 }
+
+/** Maps a fee_plans / carrier_fee_contracts row to FeeTerms. */
+export function feeTermsFromRow(row: {
+  model: FeeModel;
+  percentage: string | number | null;
+  flat_weekly_amount: string | number | null;
+  include_detention?: boolean;
+  include_layover?: boolean;
+  include_tonu?: boolean;
+  include_other?: boolean;
+}): FeeTerms {
+  return {
+    model: row.model,
+    percentage: row.percentage,
+    flatWeeklyAmount: row.flat_weekly_amount,
+    includeDetention: row.include_detention ?? false,
+    includeLayover: row.include_layover ?? false,
+    includeTonu: row.include_tonu ?? false,
+    includeOther: row.include_other ?? false,
+  };
+}

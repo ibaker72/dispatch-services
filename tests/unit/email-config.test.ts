@@ -14,6 +14,7 @@ const SAMPLE: { [K in TemplateKey]: Parameters<(typeof TEMPLATES)[K]>[0] } = {
   information_requested: { contactName: "Pat", request: "Upload a current COI", resumeUrl: "https://x.example/apply/resume?t=1" },
   application_approved: { contactName: "Pat", carrierName: "Pat Hauling", nextSteps: "Watch for the portal invitation." },
   portal_invitation: { carrierName: "Pat Hauling", acceptUrl: "https://x.example/invite", expiresInDays: 7, role: "owner" },
+  staff_invitation: { inviterName: "Alex Admin", roleLabel: "Dispatcher", acceptUrl: "https://x.example/auth/confirm" },
   agreement_accepted: { signerName: "Pat", agreementTitle: "Dispatch Service Agreement", version: "1.0", acceptedAt: "Sep 22, 2026", documentHash: "a".repeat(64) },
   missing_document_reminder: { carrierName: "Pat Hauling", documents: ["W-9"], portalUrl: "https://x.example/portal" },
   expiring_insurance_reminder: { carrierName: "Pat Hauling", documentLabel: "Certificate of insurance", expiresOn: "Oct 1, 2026", daysRemaining: 9, portalUrl: "https://x.example/portal" },

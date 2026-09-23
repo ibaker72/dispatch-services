@@ -20,6 +20,8 @@ export const RATE_LIMITS = {
   magicLink: { limit: 5, windowSeconds: 900 },
   passwordReset: { limit: 5, windowSeconds: 900 },
   upload: { limit: 60, windowSeconds: 600 },
+  download: { limit: 120, windowSeconds: 600 },
+  export: { limit: 20, windowSeconds: 600 },
   invite: { limit: 20, windowSeconds: 3600 },
   checkout: { limit: 10, windowSeconds: 600 },
   mfa: { limit: 10, windowSeconds: 600 },

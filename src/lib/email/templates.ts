@@ -15,6 +15,7 @@ export interface TemplateData {
   information_requested: { contactName: string; request: string; resumeUrl: string };
   application_approved: { contactName: string; carrierName: string; nextSteps: string };
   portal_invitation: { inviterName?: string | null; carrierName: string; acceptUrl: string; expiresInDays: number; role: "owner" | "member" };
+  staff_invitation: { inviterName?: string | null; roleLabel: string; acceptUrl: string };
   agreement_accepted: { signerName: string; agreementTitle: string; version: string; acceptedAt: string; documentHash: string };
   missing_document_reminder: { carrierName: string; documents: string[]; portalUrl: string };
   expiring_insurance_reminder: { carrierName: string; documentLabel: string; expiresOn: string; daysRemaining: number; portalUrl: string };
@@ -39,6 +40,7 @@ export const TEMPLATE_LABELS: Record<TemplateKey, string> = {
   information_requested: "More information requested",
   application_approved: "Application approved",
   portal_invitation: "Portal invitation",
+  staff_invitation: "Staff account invitation",
   agreement_accepted: "Agreement accepted",
   missing_document_reminder: "Missing document reminder",
   expiring_insurance_reminder: "Expiring insurance reminder",
@@ -103,6 +105,16 @@ export const TEMPLATES: { [K in TemplateKey]: Builder<K> } = {
     ],
     cta: { label: "Accept invitation", url: d.acceptUrl },
     footnote: `This invitation expires in ${d.expiresInDays} days and can be used once.`,
+  }),
+  staff_invitation: (d) => ({
+    subject: "Set up your dispatch dashboard account",
+    heading: "You have been invited to the dispatch dashboard",
+    paragraphs: [
+      `${d.inviterName ? `${d.inviterName} invited you` : "You have been invited"} to join the internal dispatch dashboard as ${d.roleLabel.toLowerCase()}.`,
+      "Use the button below to choose a password. Administrative accounts should also enable two-step verification.",
+    ],
+    cta: { label: "Set up account", url: d.acceptUrl },
+    footnote: "This link can be used once. Ask an administrator for a new link if it has expired.",
   }),
   agreement_accepted: (d) => ({
     subject: `Agreement accepted: ${d.agreementTitle}`,

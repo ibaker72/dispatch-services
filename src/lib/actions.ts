@@ -103,6 +103,37 @@ export async function runAction<S extends z.ZodType, T>(
   }
 }
 
+/**
+ * Converts FormData to a plain object for Zod: repeated keys become arrays,
+ * empty strings are kept (schemas decide), and File entries are dropped
+ * (uploads use signed URLs, never form posts).
+ */
+export function formDataToObject(fd: FormData): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const key of new Set(fd.keys())) {
+    if (key.startsWith("$ACTION")) continue;
+    const values = fd.getAll(key).filter((v): v is string => typeof v === "string");
+    if (values.length === 0) continue;
+    out[key] = key.endsWith("[]") ? values : values.length > 1 ? values : values[0];
+  }
+  for (const key of Object.keys(out)) {
+    if (key.endsWith("[]")) {
+      out[key.slice(0, -2)] = out[key];
+      delete out[key];
+    }
+  }
+  return out;
+}
+
+/** Server action taking FormData (used by the generic <ActionForm>). */
+export async function runFormAction<S extends z.ZodType, T>(
+  schema: S,
+  formData: FormData,
+  handler: (data: z.output<S>) => Promise<T>,
+): Promise<ActionResult<T>> {
+  return runAction(schema, formDataToObject(formData), handler);
+}
+
 export function toActionError(error: unknown): { ok: false; error: string } {
   if (isNextControlFlow(error)) throw error;
   if (error instanceof AppError || error instanceof DbError || error instanceof RateLimitError) {

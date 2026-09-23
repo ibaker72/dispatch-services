@@ -34,7 +34,7 @@ export async function login(page: Page, who: { email: string; password: string }
   await page.goto(`/login${next ? `?next=${encodeURIComponent(next)}` : ""}`);
   await page.getByLabel("Email").fill(who.email);
   await page.getByLabel("Password").fill(who.password);
-  await page.getByRole("button", { name: "Sign in" }).click();
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
   await page.waitForURL((url) => !url.pathname.startsWith("/login"));
 }
 

@@ -22,6 +22,26 @@ export const stateSchema = z
   .toUpperCase()
   .refine((v) => US_STATE_CODES.includes(v), "Choose a state");
 
+/** HTML form helpers: FormData delivers strings, "on" for checked boxes and "" for empty fields. */
+export const formBool = z.preprocess((v) => v === true || v === "on" || v === "true" || v === "1", z.boolean());
+const emptyToUndefined = (v: unknown) => (v === "" || v === null ? undefined : v);
+export const formNumber = (min: number, max: number, label: string) =>
+  z.preprocess(emptyToUndefined, z.coerce.number({ message: `${label} must be a number` }).min(min, `${label} must be at least ${min}`).max(max, `${label} is too large`));
+export const formOptionalNumber = (min: number, max: number, label: string) => formNumber(min, max, label).optional();
+export const formMoney = (label: string, min = 0) =>
+  z.preprocess(
+    emptyToUndefined,
+    z
+      .string()
+      .trim()
+      .regex(/^\d{1,10}(\.\d{1,2})?$/, `${label} must be a dollar amount like 1250.00`)
+      .refine((v) => Number(v) >= min, `${label} must be at least ${min}`),
+  );
+export const formOptionalUuid = z.preprocess(emptyToUndefined, z.uuid().optional());
+export const formOptionalText = (max = 500) => z.preprocess(emptyToUndefined, z.string().trim().max(max).optional());
+export const formDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Enter a valid date");
+export const formOptionalDate = z.preprocess(emptyToUndefined, formDate.optional());
+
 /** Bot protection fields present on every public form. */
 export const botFields = {
   company_website: z.string().max(200).optional(),
